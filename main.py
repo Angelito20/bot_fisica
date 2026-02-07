@@ -4,7 +4,7 @@ import os
 
 app = FastAPI()
 
-TOKEN = os.getenv("TELEGRAM_TOKEN")
+TOKEN = os.getenv("8547596816:AAEBVBLGXXNowDnx7TBY2ZZjV2U9K44Iye0")
 API_URL = f"https://api.telegram.org/bot{TOKEN}"
 
 @app.get("/")
