@@ -1,32 +1,34 @@
+from fastapi import FastAPI, Request
+import requests
 import os
-from fastapi import FastAPI
-from google import genai
-
-# Leer variables de entorno
-API_KEY = os.getenv("GEMINI_API_KEY")
-PORT = int(os.getenv("PORT", 8000))
-
-if not API_KEY:
-    raise RuntimeError("Faltan variables de entorno")
-
-# Configurar Gemini
-client = genai.Client(api_key=API_KEY)
 
 app = FastAPI()
 
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+API_URL = f"https://api.telegram.org/bot{TOKEN}"
+
 @app.get("/")
 def root():
-    return {"status": "Bot funcionando correctamente 🚀"}
+    return {"status": "Bot funcionando 🚀"}
 
-@app.get("/ask")
-def ask(prompt: str):
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=prompt
+@app.post("/webhook")
+async def telegram_webhook(request: Request):
+    data = await request.json()
+    print("MENSAJE RECIBIDO:", data)
+
+    if "message" not in data:
+        return {"ok": True}
+
+    chat_id = data["message"]["chat"]["id"]
+    text = data["message"].get("text", "")
+
+    requests.post(
+        f"{API_URL}/sendMessage",
+        json={
+            "chat_id": chat_id,
+            "text": f"✅ Recibí tu mensaje: {text}"
+        }
     )
-    return {"response": response.text}
 
-# Para Railway
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    return {"ok": True}
+
