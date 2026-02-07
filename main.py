@@ -5,16 +5,16 @@ import os
 app = FastAPI()
 
 TOKEN = os.getenv("8547596816:AAEBVBLGXXNowDnx7TBY2ZZjV2U9K44Iye0")
-API_URL = f"https://api.telegram.org/bot{TOKEN}"
+API_URL = f"https://api.telegram.org/bot{8547596816:AAEBVBLGXXNowDnx7TBY2ZZjV2U9K44Iye0}"
 
 @app.get("/")
 def root():
     return {"status": "Bot funcionando 🚀"}
 
 @app.post("/webhook")
-async def telegram_webhook(request: Request):
+async def webhook(request: Request):
     data = await request.json()
-    print("MENSAJE RECIBIDO:", data)
+    print("MENSAJE:", data)
 
     if "message" not in data:
         return {"ok": True}
@@ -26,9 +26,8 @@ async def telegram_webhook(request: Request):
         f"{API_URL}/sendMessage",
         json={
             "chat_id": chat_id,
-            "text": f"✅ Recibí tu mensaje: {text}"
+            "text": f"✅ Te leí: {text}"
         }
     )
 
     return {"ok": True}
-
